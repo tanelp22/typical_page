@@ -1,26 +1,76 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Card from "../UI/Card.js";
 import Button from "../UI/Button.js";
 import "./Login.css";
 
 const Login = () => {
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState();
+  const [passwordIsValid, setPasswordIsValid] = useState();
+  const [formIsValid, setFormIsValid] = useState(false);
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      console.log("check form is valid");
+      setFormIsValid(emailIsValid && passwordIsValid);
+      console.log("checked");
+    }, 500);
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, [emailIsValid, passwordIsValid]);
+
+  const emailChangeHandler = (event) => {
+    setEnteredEmail(event.target.value);
+  };
+  const passwordChangeHandler = (event) => {
+    setEnteredPassword(event.target.value);
+  };
+  const emailValidateHandler = () => {
+    setEmailIsValid(enteredEmail.includes("@"));
+  };
+  const passwordValidateHandler = () => {
+    setPasswordIsValid(enteredPassword.trim().length > 6);
+  };
+
   return (
-    <Card className="login">
-      <form>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email"></input>
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password"></input>
-        </div>
-        <div>
-          <Button type="submit">Login</Button>
-        </div>
-      </form>
-    </Card>
+    <div className="login">
+      <Card>
+        <form>
+          <div
+            className={`control ${emailIsValid === false ? "invalid" : ""} `}
+          >
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={enteredEmail}
+              onChange={emailChangeHandler}
+              onBlur={emailValidateHandler}
+            ></input>
+          </div>
+          <div
+            className={`control ${passwordIsValid === false ? "invalid" : ""} `}
+          >
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={enteredPassword}
+              onChange={passwordChangeHandler}
+              onBlur={passwordValidateHandler}
+            ></input>
+          </div>
+          <div className="control">
+            <Button type="submit" disabled={!formIsValid}>
+              Login
+            </Button>
+          </div>
+        </form>
+      </Card>
+    </div>
   );
 };
 
