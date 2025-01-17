@@ -4,7 +4,7 @@ import Card from "../UI/Card.js";
 import Button from "../UI/Button.js";
 import "./Login.css";
 
-const Login = () => {
+const Login = (props) => {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [emailIsValid, setEmailIsValid] = useState();
@@ -13,9 +13,8 @@ const Login = () => {
 
   useEffect(() => {
     const timeOut = setTimeout(() => {
-      console.log("check form is valid");
       setFormIsValid(emailIsValid && passwordIsValid);
-      console.log("checked");
+      console.log("form is valid", emailIsValid && passwordIsValid);
     }, 500);
     return () => {
       clearTimeout(timeOut);
@@ -34,11 +33,20 @@ const Login = () => {
   const passwordValidateHandler = () => {
     setPasswordIsValid(enteredPassword.trim().length > 6);
   };
+  const submitHandler = (event) => {
+    event.preventDefault();
+    console.log("Submit handler triggered");
+    if (!props.onLogin) {
+      console.error("onLogin function is not defined!");
+      return;
+    }
+    props.onLogin(enteredEmail, enteredPassword);
+  };
 
   return (
     <div className="login">
       <Card>
-        <form>
+        <form onSubmit={submitHandler}>
           <div
             className={`control ${emailIsValid === false ? "invalid" : ""} `}
           >
